@@ -1,0 +1,1 @@
+@extends('admin.layouts.app') @section('title','Edit Page · Content Studio') @section('breadcrumb','Pages / Edit') @section('content')<section class="mb-7 flex flex-col items-start justify-between gap-6 lg:flex-row"><div><h1>Edit {{ $page->title }}</h1></div></section>@include('admin.pages._form')@endsection

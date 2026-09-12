@@ -1,0 +1,1 @@
+@extends('admin.layouts.app') @section('title','Add Resource · Content Studio') @section('breadcrumb','Resources / Add') @section('content')<section class="mb-7 flex flex-col items-start justify-between gap-6 lg:flex-row"><div><h1>Add Resource</h1><p>Add something genuinely useful to your curated library.</p></div></section>@include('admin.resources._form')@endsection

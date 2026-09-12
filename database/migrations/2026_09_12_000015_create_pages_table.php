@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration; use Illuminate\Database\Schema\Blueprint; use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up(): void { Schema::create('pages', function (Blueprint $table) { $table->id(); $table->foreignId('featured_media_id')->nullable()->constrained('media')->nullOnDelete(); $table->string('title'); $table->string('slug')->unique(); $table->json('content')->nullable(); $table->enum('status',['draft','published'])->default('draft'); $table->string('seo_title')->nullable(); $table->text('seo_description')->nullable(); $table->timestamp('published_at')->nullable(); $table->timestamps(); $table->softDeletes(); }); } public function down(): void { Schema::dropIfExists('pages'); } };

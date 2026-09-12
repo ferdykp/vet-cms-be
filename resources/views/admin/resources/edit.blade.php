@@ -1,0 +1,1 @@
+@extends('admin.layouts.app') @section('title','Edit Resource · Content Studio') @section('breadcrumb','Resources / Edit') @section('content')<section class="mb-7 flex flex-col items-start justify-between gap-6 lg:flex-row"><div><h1>Edit Resource</h1><p>Keep recommendations concise and trustworthy.</p></div></section>@include('admin.resources._form')@endsection
