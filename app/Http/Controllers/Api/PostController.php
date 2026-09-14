@@ -27,8 +27,10 @@ class PostController extends Controller
                 $query->whereHas('tags', fn ($q) => $q->where('slug', $request->tag));
             })
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
+            ->when($request->query('sort') === 'readtime', fn ($q) => $q->orderByDesc('reading_time'))
             ->latest('published_at')
-            ->paginate(min($request->integer('per_page', 12), 50))
+            ->orderByDesc('id')
+            ->paginate(max(1, min($request->integer('per_page', 12), 50)))
             ->withQueryString();
 
         return response()->json($posts);

@@ -11,7 +11,7 @@ window.postEditor = (initial = [], initialStatus = 'draft') => ({
     blocks: Array.isArray(initial)
         ? initial.map((block, index) => ({
             uid: crypto.randomUUID?.() || `${Date.now()}-${index}`,
-            type: block.type || 'paragraph',
+            type: ({ header: 'heading', blockquote: 'quote' })[block.type] || block.type || 'paragraph',
             data: block.data || { text: '' },
         }))
         : [],
@@ -25,6 +25,7 @@ window.postEditor = (initial = [], initialStatus = 'draft') => ({
 
     init() {
         if (!this.blocks.length) this.addBlock('paragraph', false);
+        this.blocks.forEach(block => { if (block.type === 'image' && !block.data.url) block.data.url = block.data.file?.url || ''; });
         const form = this.$root;
         form.addEventListener('input', () => { this.dirty = true; });
         form.addEventListener('change', () => { this.dirty = true; });
@@ -82,18 +83,23 @@ window.postEditor = (initial = [], initialStatus = 'draft') => ({
             type.value = block.type;
             box.appendChild(type);
 
-            Object.entries(block.data || {}).forEach(([key, value]) => {
+            const appendValue = (name, value) => {
+                if (value !== null && typeof value === 'object') {
+                    Object.entries(value).forEach(([key, child]) => appendValue(`${name}[${key}]`, child));
+                    return;
+                }
                 const input = document.createElement('input');
                 input.type = 'hidden';
-                input.name = `content[blocks][${index}][data][${key}]`;
-                input.value = value ?? '';
+                input.name = name;
+                input.value = typeof value === 'boolean' ? (value ? '1' : '0') : value ?? '';
                 box.appendChild(input);
-            });
+            };
+            appendValue(`content[blocks][${index}][data]`, block.data || {});
         });
     },
 
     get saveLabel() {
-        return this.dirty ? 'Unsaved changes' : 'All changes saved';
+        return this.dirty ? 'Unsaved changes' : 'No unsaved changes';
     },
 
     previewText(value) {

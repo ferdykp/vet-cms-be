@@ -5,18 +5,18 @@
     @php
         $input =
             'mt-1 w-full rounded-lg border border-[#DDE2DF] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#8FA58F] focus:ring-2 focus:ring-[#8FA58F]/15';
-        $label = 'text-xs font-medium text-[#424843]';
+        $label = 'text-sm font-medium text-[#424843]';
     @endphp
     <section class="mb-7 flex flex-col items-start justify-between gap-5 lg:flex-row lg:items-end">
         <div class="max-w-2xl">
-            <span class="text-[10px] font-semibold tracking-[0.11em] text-[#526A5A]">PUBLIC PROFESSIONAL IDENTITY</span>
+            <span class="text-[13px] font-semibold tracking-[0.11em] text-[#526A5A]">PUBLIC PROFESSIONAL IDENTITY</span>
             <h1 class="mt-2 font-['Newsreader'] text-3xl font-medium tracking-tight text-[#293C32] sm:text-4xl">Professional
                 Profile</h1>
-            <p class="mt-2 text-sm leading-6 text-[#70766F]">This information powers the About page, author card, and
+            <p class="mt-2 text-sm leading-6 text-[#545F57]">This information powers the About page, author card, and
                 professional credibility sections on the public website.</p>
         </div>
-        <a href="{{ config('app.frontend_url', env('FRONTEND_URL', '#')) }}/about" target="_blank"
-            class="inline-flex h-10 items-center rounded-lg border border-[#DDE2DF] bg-white px-4 text-xs font-medium text-[#293C32] no-underline hover:bg-[#F0F5F0]">Preview
+        <a href="{{ config('app.frontend_url', env('FRONTEND_URL', '#')) }}/about" target="_blank" rel="noopener noreferrer"
+            class="inline-flex h-10 items-center rounded-lg border border-[#DDE2DF] bg-white px-4 text-sm font-medium text-[#293C32] no-underline hover:bg-[#F0F5F0]">Preview
             public profile ↗</a>
     </section>
 
@@ -27,7 +27,7 @@
                 <section class="rounded-2xl border border-[#E6EAE4] bg-white p-5 shadow-sm sm:p-6">
                     <div class="mb-5 border-b border-[#EEF1ED] pb-4">
                         <h2 class="text-sm font-semibold text-[#293C32]">Identity & positioning</h2>
-                        <p class="mt-1 text-xs text-[#70766F]">Keep the headline concise and understandable for both
+                        <p class="mt-1 text-sm text-[#545F57]">Keep the headline concise and understandable for both
                             veterinary professionals and general readers.</p>
                     </div>
                     <div class="grid gap-4 md:grid-cols-2">
@@ -47,7 +47,7 @@
                         <label class="{{ $label }} md:col-span-2">Location<input class="{{ $input }}"
                                 name="location" value="{{ old('location', $profile->location) }}"></label>
                         <label class="{{ $label }} md:col-span-2">Short Bio
-                            <textarea class="{{ $input }} min-h-24 resize-y" name="short_bio" maxlength="1000">{{ old('short_bio', $profile->short_bio) }}</textarea><span class="mt-1 block text-[10px] text-[#8A908A]">Used in compact
+                            <textarea class="{{ $input }} min-h-24 resize-y" name="short_bio" maxlength="1000">{{ old('short_bio', $profile->short_bio) }}</textarea><span class="mt-1 block text-[13px] text-[#5B675E]">Used in compact
                                 author cards and homepage sections.</span>
                         </label>
                         <label class="{{ $label }} md:col-span-2">Full Biography
@@ -59,7 +59,7 @@
                 <section class="rounded-2xl border border-[#E6EAE4] bg-white p-5 shadow-sm sm:p-6">
                     <div class="mb-4">
                         <h2 class="text-sm font-semibold text-[#293C32]">Clinical interests</h2>
-                        <p class="mt-1 text-xs text-[#70766F]">One topic per line, for example: Cytology, Oncology, Internal
+                        <p class="mt-1 text-sm text-[#545F57]">One topic per line, for example: Cytology, Oncology, Internal
                             Medicine.</p>
                     </div>
                     <textarea id="interest-lines" class="{{ $input }} min-h-32 resize-y">{{ implode("\n", old('clinical_interests', $profile->clinical_interests ?? [])) }}</textarea>
@@ -69,7 +69,7 @@
                 <section class="rounded-2xl border border-[#E6EAE4] bg-white p-5 shadow-sm sm:p-6">
                     <div class="mb-4">
                         <h2 class="text-sm font-semibold text-[#293C32]">Social & external links</h2>
-                        <p class="mt-1 text-xs text-[#70766F]">Only fill channels you actively want visitors to see.</p>
+                        <p class="mt-1 text-sm text-[#545F57]">Only fill channels you actively want visitors to see.</p>
                     </div>
                     <div class="grid gap-4 md:grid-cols-2">
                         @foreach (['linkedin', 'instagram', 'youtube', 'x', 'website'] as $network)
@@ -85,7 +85,7 @@
             <aside class="space-y-5">
                 <section class="rounded-2xl border border-[#E6EAE4] bg-white p-5 shadow-sm xl:sticky xl:top-24">
                     <h2 class="text-sm font-semibold text-[#293C32]">Profile media</h2>
-                    <p class="mt-1 text-xs leading-5 text-[#70766F]">Choose existing images from Media Library. Upload new
+                    <p class="mt-1 text-sm leading-5 text-[#545F57]">Choose existing images from Media Library. Upload new
                         images there first.</p>
                     @if ($profile->profilePhoto)
                         <img src="{{ $profile->profilePhoto->url }}"
@@ -109,7 +109,7 @@
                             @endforeach
                         </select></label>
                     <a href="{{ route('admin.media.index') }}"
-                        class="mt-4 inline-flex text-xs font-medium text-[#526A5A] no-underline hover:underline">Open Media
+                        class="mt-4 inline-flex text-sm font-medium text-[#526A5A] no-underline hover:underline">Open Media
                         Library →</a>
                 </section>
             </aside>
@@ -120,10 +120,10 @@
     </form>
 
     <section class="mt-10">
-        <div class="mb-4"><span class="text-[10px] font-semibold tracking-[.1em] text-[#526A5A]">CREDENTIALS &
+        <div class="mb-4"><span class="text-[13px] font-semibold tracking-[.1em] text-[#526A5A]">CREDENTIALS &
                 CAREER</span>
             <h2 class="mt-1 font-['Newsreader'] text-2xl font-medium text-[#293C32]">Professional timeline</h2>
-            <p class="mt-1 text-sm text-[#70766F]">Add credentials here instead of editing code. Existing items can be
+            <p class="mt-1 text-sm text-[#545F57]">Add credentials here instead of editing code. Existing items can be
                 removed and replaced when needed.</p>
         </div>
         <div class="grid gap-4 lg:grid-cols-2">

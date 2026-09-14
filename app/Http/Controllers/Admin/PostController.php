@@ -154,7 +154,7 @@ class PostController extends Controller
                 'view_count', 'created_at', 'updated_at', 'deleted_at',
             ]);
 
-            $copy->title = $post->title . ' (Copy)';
+            $copy->title = $post->title.' (Copy)';
             $copy->slug = $this->uniqueSlug($copy->title);
             $copy->status = 'draft';
             $copy->published_at = null;
@@ -209,7 +209,7 @@ class PostController extends Controller
             'tags.*' => ['integer', 'exists:tags,id'],
             'status' => ['required', Rule::in(['draft', 'scheduled', 'published', 'archived'])],
             'visibility' => ['required', Rule::in(['public', 'private'])],
-            'scheduled_at' => ['nullable', 'date', Rule::requiredIf(fn () => $request->input('status') === 'scheduled'), 'after:now'],
+            'scheduled_at' => ['exclude_unless:status,scheduled', 'nullable', 'date', Rule::requiredIf(fn () => $request->input('status') === 'scheduled'), 'after:now'],
             'published_at' => ['nullable', 'date'],
             'is_featured' => ['nullable', 'boolean'],
             'allow_indexing' => ['nullable', 'boolean'],
@@ -242,19 +242,18 @@ class PostController extends Controller
         return $data;
     }
 
-
     private function calculateReadingTime(array $content): int
     {
+        $parts = [];
         $blocks = $content['blocks'] ?? $content;
-        $text = collect(is_array($blocks) ? $blocks : [])
-            ->map(function ($block) {
-                $data = is_array($block) ? ($block['data'] ?? []) : [];
-                return collect(is_array($data) ? $data : [])->values()->implode(' ');
-            })
-            ->implode(' ');
+        array_walk_recursive($blocks, function ($value, $key) use (&$parts) {
+            if (is_string($value) && ! in_array($key, ['type', 'url', 'style', 'alt'], true)) {
+                $parts[] = strip_tags($value);
+            }
+        });
+        $words = preg_split('/\s+/u', trim(implode(' ', $parts)), -1, PREG_SPLIT_NO_EMPTY);
 
-        $words = str_word_count(strip_tags($text));
-        return max(1, (int) ceil($words / 200));
+        return max(1, (int) ceil(count($words ?: []) / 200));
     }
 
     private function uniqueSlug(string $title, ?string $requested = null, ?int $ignoreId = null): string
@@ -267,7 +266,7 @@ class PostController extends Controller
             ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
             ->where('slug', $slug)
             ->exists()) {
-            $slug = $base . '-' . $counter++;
+            $slug = $base.'-'.$counter++;
         }
 
         return $slug;

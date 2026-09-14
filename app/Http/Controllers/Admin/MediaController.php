@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
+use App\Models\Page;
+use App\Models\Post;
+use App\Models\Profile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,9 +45,9 @@ class MediaController extends Controller
         $created = [];
 
         foreach ($request->file('files', []) as $file) {
-            $directory = 'media/' . now()->format('Y/m');
-            $extension = strtolower($file->getClientOriginalExtension());
-            $fileName = Str::uuid() . ($extension ? ".{$extension}" : '');
+            $directory = 'media/'.now()->format('Y/m');
+            $extension = strtolower($file->guessExtension());
+            $fileName = Str::uuid().($extension ? ".{$extension}" : '');
             $path = $file->storeAs($directory, $fileName, 'public');
 
             [$width, $height] = $this->imageDimensions($file->getRealPath(), $file->getMimeType());
@@ -71,7 +74,7 @@ class MediaController extends Controller
             ], 201);
         }
 
-        return back()->with('success', count($created) . ' media berhasil diunggah.');
+        return back()->with('success', count($created).' media berhasil diunggah.');
     }
 
     public function update(Request $request, Media $media): RedirectResponse|JsonResponse
@@ -94,6 +97,7 @@ class MediaController extends Controller
     {
         if ($this->isInUse($media)) {
             $message = 'Media masih digunakan pada konten atau profil dan tidak dapat dihapus.';
+
             return request()->expectsJson()
                 ? response()->json(['message' => $message], 422)
                 : back()->with('error', $message);
@@ -116,15 +120,37 @@ class MediaController extends Controller
         }
 
         $size = @getimagesize($path);
+
         return $size ? [$size[0], $size[1]] : [null, null];
+    }
+
+    private function isReferencedInContent(Media $media): bool
+    {
+        foreach ([Post::class, Page::class] as $model) {
+            foreach ($model::withTrashed()->select('id', 'content')->cursor() as $record) {
+                $found = false;
+                $content = $record->content ?? [];
+                array_walk_recursive($content, function ($value) use ($media, &$found) {
+                    if (is_string($value) && in_array($value, [$media->url, $media->path, '/storage/'.$media->path], true)) {
+                        $found = true;
+                    }
+                });
+                if ($found) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function isInUse(Media $media): bool
     {
-        return \App\Models\Post::where('featured_media_id', $media->id)->exists()
-            || \App\Models\Page::where('featured_media_id', $media->id)->exists()
-            || \App\Models\Profile::where('profile_photo_id', $media->id)->exists()
-            || \App\Models\Profile::where('hero_photo_id', $media->id)->exists()
+        return $this->isReferencedInContent($media)
+            || Post::withTrashed()->where('featured_media_id', $media->id)->exists()
+            || Page::withTrashed()->where('featured_media_id', $media->id)->exists()
+            || Profile::where('profile_photo_id', $media->id)->exists()
+            || Profile::where('hero_photo_id', $media->id)->exists()
             || \App\Models\Resource::where('image_id', $media->id)->exists();
     }
 }

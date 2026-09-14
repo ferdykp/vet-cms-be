@@ -16,7 +16,7 @@ class ResourceController extends Controller
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
             ->orderBy('sort_order')
             ->latest()
-            ->paginate(min($request->integer('per_page', 12), 50));
+            ->paginate(max(1, min($request->integer('per_page', 12), 50)));
 
         return response()->json($resources);
     }
