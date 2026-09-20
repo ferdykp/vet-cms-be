@@ -33,6 +33,8 @@
                     <div class="grid gap-4 md:grid-cols-2">
                         <label class="{{ $label }}">Full Name<input class="{{ $input }}" name="full_name"
                                 value="{{ old('full_name', $profile->full_name) }}" required></label>
+                        <label class="{{ $label }}">Call Name<input class="{{ $input }}" name="short_name"
+                                value="{{ old('short_name', $profile->short_name) }}" required></label>
                         <label class="{{ $label }}">Professional Title<input class="{{ $input }}"
                                 name="professional_title"
                                 value="{{ old('professional_title', $profile->professional_title) }}"
